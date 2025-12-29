@@ -15,9 +15,8 @@ public class Accounts extends BaseEntity {
     private Long accountNumber;
     @Column(name = "account_type")
     private String accountType;
-    private String email;
-    @Column(name = "mobile_number")
-    private String mobileNumber;
+    @Column(name = "branch_address")
+    private String branchAddress;
     /*Actually, spring jpa is smart enough to guess that customerId corresponds to customer_id,
     but I keep this annotation to remember what to do if the field name and the column name in the table do not match.*/
 }
