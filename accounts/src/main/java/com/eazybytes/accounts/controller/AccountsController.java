@@ -4,15 +4,19 @@ import com.eazybytes.accounts.costants.AccountsConstants;
 import com.eazybytes.accounts.dto.CustomerDto;
 import com.eazybytes.accounts.dto.ResponseDto;
 import com.eazybytes.accounts.service.IAccountsService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
-@AllArgsConstructor //se è presente un solo costruttore questa annotazione mi permetterà di iniettare tutti gli attributi privati di quessta classe senza scrivere il costruttore
+@AllArgsConstructor//se è presente un solo costruttore questa annotazione mi permetterà di iniettare tutti gli attributi privati di quessta classe senza scrivere il costruttore
+@Validated //Avverte Spring che ci sono delle valisazioni da fare nei dati che arrivano agli endpoints di questo controller
 public class AccountsController {
 
     private IAccountsService iAccountsService;//verra iniettato tramite l'annotazione Lombok AllArgsConstructor, come se avessi scritto il costruttore con l'annotazione @Autowired
@@ -22,7 +26,10 @@ public class AccountsController {
      * @param customerDto - CoustumerDto object
      */
     @PostMapping("/create")//Quando sicrea un nuovo record si invia una POST request quindi usiamo l'annotazione @PostMapping
-    public ResponseEntity<ResponseDto> createAccount(@RequestBody CustomerDto customerDto) {//@RequestBody indica che la richiesta ha un body con i dati al suo interno, è neccessario creare una classe che abbia le stesse caratteristichedel body affinchè Spring possa mappare i valori del body con i valori della classe
+    public ResponseEntity<ResponseDto> createAccount(
+            @Valid //@Valid indica che Spring deve fare le validazioni sull'ogetto CustomerDto passato come parametro.
+            @RequestBody //@RequestBody indica che la richiesta ha un body con i dati al suo interno, è neccessario creare una classe che abbia le stesse caratteristichedel body affinchè Spring possa mappare i valori del body con i valori della classe
+            CustomerDto customerDto) {
         iAccountsService.createAccount(customerDto);//se non c'è ecezione verrà inviata la risposta sotto, altrimenti la risposta sara gestita nella GlobalExceptionHandler
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -35,7 +42,10 @@ public class AccountsController {
      * @return - CustomerDto object
      */
     @GetMapping("/fetch")//quando si cerca di leggere un dato si invia una GET request quindi usiamo l'annotazione @GetMapping
-    public ResponseEntity<CustomerDto> fetchAccountDetails(@RequestParam String mobileNumber) {
+    public ResponseEntity<CustomerDto> fetchAccountDetails(
+            @Pattern(regexp = "^[0-9]{10}$", message = "Mobile number must be 10 digits") //Non avendo in input un oggetto ma un valore singolo, la validazione si fa con la validation constraint @Pattern
+            @RequestParam
+            String mobileNumber) {
         //@RequestParam indica che la richiesta ha un parametro al suo interno, possiamo dare un valore diverso al parametro, ma in questo caso si deve assegnare alla proprietà value il nome del parametro dell'endpoint e assegnare al parametro del metodo il nome desiderato
 
         CustomerDto customerDto = iAccountsService.fetchAccountDetails(mobileNumber);
@@ -49,7 +59,7 @@ public class AccountsController {
      * @return - boolean
      */
     @PutMapping("/update")
-    public  ResponseEntity<ResponseDto> updateAccountDetails(@RequestBody CustomerDto customerDto) {
+    public  ResponseEntity<ResponseDto> updateAccountDetails(@Valid@RequestBody CustomerDto customerDto) {
         boolean isUpdated = iAccountsService.updateAccount(customerDto);
         if(isUpdated) {
             /*return ResponseEntity
@@ -72,7 +82,10 @@ public class AccountsController {
      * @return - boolean
      */
     @DeleteMapping("/delete")
-    public ResponseEntity<ResponseDto> deleteAccountDetails(@RequestParam String mobileNumber) {
+    public ResponseEntity<ResponseDto> deleteAccountDetails(
+            @Pattern(regexp = "^[0-9]{10}$", message = "Mobile number must be 10 digits")
+            @RequestParam
+            String mobileNumber) {
         boolean isDeleted = iAccountsService.deleteAccount(mobileNumber);
         if(isDeleted) {
             return ResponseEntity.ok(new ResponseDto(AccountsConstants.STATUS_200, AccountsConstants.MESSAGE_200));
