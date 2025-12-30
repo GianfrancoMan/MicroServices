@@ -8,8 +8,8 @@ public class AccountsMapper {
     //Mappa e restituisce l'oggetto AccountsDto con i valori dell'Accounts
     public static AccountsDto mapToAccountsDto(Accounts accounts, AccountsDto accountsDto) {
         accountsDto.setAccountNumber(accounts.getAccountNumber());
-        accounts.setAccountType(accountsDto.getAccountType());
-        accounts.setBranchAddress(accountsDto.getBranchAddress());
+        accountsDto.setAccountType(accounts.getAccountType());
+        accountsDto.setBranchAddress(accounts.getBranchAddress());
         return accountsDto;
     }
 
