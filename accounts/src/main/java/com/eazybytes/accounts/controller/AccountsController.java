@@ -2,8 +2,15 @@ package com.eazybytes.accounts.controller;
 
 import com.eazybytes.accounts.costants.AccountsConstants;
 import com.eazybytes.accounts.dto.CustomerDto;
+import com.eazybytes.accounts.dto.ErrorResponseDto;
 import com.eazybytes.accounts.dto.ResponseDto;
 import com.eazybytes.accounts.service.IAccountsService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -13,6 +20,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@Tag( //consente di dare dettagli su questo controller nella documentazione swagger
+        name = "CRUD REST APIs for Accounts microservice in EazyBank",
+        description = "CRUD REST APIs  in EazyBank to CREATE, UPDATE, FETCH AND DELETE accounts details"
+)
 @RestController
 @RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
 @AllArgsConstructor//se è presente un solo costruttore questa annotazione mi permetterà di iniettare tutti gli attributi privati di quessta classe senza scrivere il costruttore
@@ -25,6 +36,23 @@ public class AccountsController {
      * Creates a new account
      * @param customerDto - CoustumerDto object
      */
+    @Operation(
+            summary = "Create Account REST API",
+            description = "REST API to create new Customer & Account inside EazyBank"
+    )
+    @ApiResponses({//consente di inserire dettagli sulla responce nella documentazione swagger
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "HTTP Status CREATED"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    })
     @PostMapping("/create")//Quando sicrea un nuovo record si invia una POST request quindi usiamo l'annotazione @PostMapping
     public ResponseEntity<ResponseDto> createAccount(
             @Valid //@Valid indica che Spring deve fare le validazioni sull'ogetto CustomerDto passato come parametro.
@@ -41,6 +69,27 @@ public class AccountsController {
      * @param mobileNumber - Mobile number of the customer
      * @return - CustomerDto object
      */
+    @Operation(
+            summary = "Fetch Account Details REST API",
+            description = "REST API to fetch  Customer & Account details  based on a mobile number"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    })
+/*    @ApiResponse( //consente di inserire dettagli sulla responce nella documentazione swagger
+            responseCode = "200",
+            description = "HTTP Status OK"
+    )*/
     @GetMapping("/fetch")//quando si cerca di leggere un dato si invia una GET request quindi usiamo l'annotazione @GetMapping
     public ResponseEntity<CustomerDto> fetchAccountDetails(
             @Pattern(regexp = "^[0-9]{10}$", message = "Mobile number must be 10 digits") //Non avendo in input un oggetto ma un valore singolo, la validazione si fa con la validation constraint @Pattern
@@ -58,6 +107,30 @@ public class AccountsController {
      * @param customerDto - CoustumerDto object
      * @return - boolean
      */
+    @Operation(
+            summary = "update Account Details REST API",
+            description = "REST API to update Customer & Account details based on a account number"
+    )
+    @ApiResponses({ //consente di inserire dettagli su più  responses nella documentazione swagger
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ) ,
+            @ApiResponse(
+                    responseCode = "417",
+                    description = "HTTP Status Expectation Failed"
+            ) ,
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status INTERNAL SERVER ERROR",
+                    content = @Content( //i dati delle response in errore sono indicati nella classe ErrorResponseDto
+                                                        // che pero' viene invocata nella GlobalEceptionhandler mentre  qui non viene vista ...
+                            schema = @Schema( //pertanto dobbiamo darne indicazione con queste annotazioni @Content e @Schema
+                                    implementation = ErrorResponseDto.class
+                            )
+                    )
+            )
+    })
     @PutMapping("/update")
     public  ResponseEntity<ResponseDto> updateAccountDetails(@Valid@RequestBody CustomerDto customerDto) {
         boolean isUpdated = iAccountsService.updateAccount(customerDto);
@@ -72,7 +145,9 @@ public class AccountsController {
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseDto(AccountsConstants.STATUS_500, AccountsConstants.MESSAGE_500)); oppure ...
                     */
-            return ResponseEntity.internalServerError().body(new ResponseDto(AccountsConstants.STATUS_500, AccountsConstants.MESSAGE_500));
+            return ResponseEntity
+                    .status(HttpStatus.EXPECTATION_FAILED)
+                    .body(new ResponseDto(AccountsConstants.STATUS_417, AccountsConstants.MESSAGE_417_UPDATE));
         }
     }
 
@@ -81,6 +156,24 @@ public class AccountsController {
      * @param mobileNumber - Mobile number of the customer
      * @return - boolean
      */
+    @Operation(
+            summary = "Delete Account Details REST API",
+            description = "REST API to Delete Customer & Account details based on a mobile number"
+    )
+    @ApiResponses({ //consente di inserire dettagli su più  responses nella documentazione swagger
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ) ,
+            @ApiResponse(
+                    responseCode = "417",
+                    description = "HTTP Status Expectation Failed"
+            ) ,
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status INTERNAL SERVER ERROR"
+            )
+    })
     @DeleteMapping("/delete")
     public ResponseEntity<ResponseDto> deleteAccountDetails(
             @Pattern(regexp = "^[0-9]{10}$", message = "Mobile number must be 10 digits")
@@ -90,7 +183,9 @@ public class AccountsController {
         if(isDeleted) {
             return ResponseEntity.ok(new ResponseDto(AccountsConstants.STATUS_200, AccountsConstants.MESSAGE_200));
         } else {
-            return ResponseEntity.internalServerError().body(new ResponseDto(AccountsConstants.STATUS_500, AccountsConstants.MESSAGE_500));
+            return ResponseEntity
+                    .status(HttpStatus.EXPECTATION_FAILED)
+                    .body(new ResponseDto(AccountsConstants.STATUS_417, AccountsConstants.MESSAGE_417_DELETE));
         }
     }
 

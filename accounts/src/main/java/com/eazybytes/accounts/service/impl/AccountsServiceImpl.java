@@ -53,8 +53,6 @@ public class AccountsServiceImpl implements IAccountsService {
         newAccounts.setAccountNumber(randomAccNumber);
         newAccounts.setAccountType(AccountsConstants.SAVINGS);
         newAccounts.setBranchAddress(AccountsConstants.ADDRESS);
-        newAccounts.setCreatedAt(LocalDateTime.now());
-        newAccounts.setCreatedBy("Anonymous");
 
         return newAccounts;
     }
