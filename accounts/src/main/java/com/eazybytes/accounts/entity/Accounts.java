@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-//@Table(name = "customers")  //when the class's name is different from the table's name, we can use this annotation to specify the table's name.
+//@Table(name = "accounts")  //when the class's name is different from the table's name, we can use this annotation to specify the table's name.
 @Getter @Setter @ToString
 @NoArgsConstructor @AllArgsConstructor
 public class Accounts extends BaseEntity {
