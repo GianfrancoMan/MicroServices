@@ -11,8 +11,8 @@ public class LoansMapper {
     /**
      * Form a Consistent LoansDto object based on the given Loans object
      *
-     * @param loans
-     * @param loansDto
+     * @param loans the formed Loans Instance
+     * @param loansDto the empty LoansDto instance that will be filled using the state of the given Loans instance
      * @return a LoansDto Object
      */
     public static LoansDto mapToLoansDto(Loans loans, LoansDto loansDto) {
@@ -29,8 +29,8 @@ public class LoansMapper {
     /**
      * Form a Consistent Loans object based on the given LoansDto object
      *
-     * @param loansDto
-     * @param loans
+     * @param loansDto the formed LoansDto Instance
+     * @param loans the empty Loans instance that will be filled using the state of the given LoansDto instance
      * @return a Loans Object
      */
     public static Loans mapToLoans(LoansDto loansDto, Loans loans) {
