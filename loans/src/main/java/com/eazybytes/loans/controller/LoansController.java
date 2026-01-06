@@ -1,6 +1,7 @@
 package com.eazybytes.loans.controller;
 
 import com.eazybytes.loans.constants.LoansConstants;
+import com.eazybytes.loans.dto.LoansDto;
 import com.eazybytes.loans.dto.ResponseDto;
 import com.eazybytes.loans.service.ILoansService;
 import jakarta.validation.constraints.NotEmpty;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 public class LoansController {
 
-    ILoansService loansService;
+    ILoansService iLoansService;
 
     @PostMapping("/create")
     public ResponseEntity<ResponseDto> ctreateLoan(@RequestParam
@@ -26,11 +27,22 @@ public class LoansController {
                                                                                     @Pattern(regexp="(^|[0-9]{10}$)",message = "Mobile Number must be 10 digits")
                                                                                     String mobileNumber) {
 
-        loansService.createLoan(mobileNumber);
+        iLoansService.createLoan(mobileNumber);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ResponseDto(LoansConstants.STATUS_201, LoansConstants.MESSAGE_201));
+    }
+
+
+    @GetMapping("/fetch")
+    public ResponseEntity<LoansDto> fetchLoanDetails(@RequestParam
+                                                                                        @NotEmpty
+                                                                                        @Pattern(regexp="(^|[0-9]{10}$)",message = "Mobile Number must be 10 digits")
+                                                                                        String mobileNumber) {
+
+        LoansDto loansDto = iLoansService.fetchLoan(mobileNumber);
+        return ResponseEntity.ok().body(loansDto);
     }
 
 }

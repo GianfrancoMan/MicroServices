@@ -3,6 +3,8 @@ package com.eazybytes.loans.service.impl;
 import com.eazybytes.loans.constants.LoansConstants;
 import com.eazybytes.loans.dto.LoansDto;
 import com.eazybytes.loans.entity.Loans;
+import com.eazybytes.loans.exception.LoanAlreadyExistsException;
+import com.eazybytes.loans.exception.ResorceNotFoundException;
 import com.eazybytes.loans.mapper.LoansMapper;
 import com.eazybytes.loans.repository.LoansRepository;
 import com.eazybytes.loans.service.ILoansService;
@@ -29,6 +31,8 @@ public class LoanServiceImpl implements ILoansService {
         Optional<Loans> optionalLoans = loansRepository.findByMobileNumber(mobileNumber);
         if(! optionalLoans.isPresent()) {
             loansRepository.save(createNewLoans(mobileNumber));
+        } else {
+            throw new LoanAlreadyExistsException(String.format("Loan with mobile numeber %s already exists", mobileNumber));
         }
     }
 
@@ -50,5 +54,21 @@ public class LoanServiceImpl implements ILoansService {
         newLoan.setOutstandingAmount(LoansConstants.NEW_LOAN_LIMIT);
 
         return newLoan;
+    }
+
+
+    /**
+     * Fetches the loan based on the mobile number
+     *
+     * @param mobileNumber String, the mobile number used to create a loan
+     * @return LoansDto object that matches the given mobile number
+     */
+    @Override
+    public LoansDto fetchLoan(String mobileNumber) {
+        Loans loans = loansRepository.findByMobileNumber(mobileNumber).orElseThrow(
+                () -> new ResorceNotFoundException("Loan", "mobileNumber", mobileNumber)
+        );
+
+        return LoansMapper.mapToLoansDto(loans, new LoansDto());
     }
 }

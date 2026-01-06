@@ -1,6 +1,8 @@
 package com.eazybytes.loans.service;
 
 import com.eazybytes.loans.dto.LoansDto;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 
 public interface ILoansService {
 
@@ -12,4 +14,11 @@ public interface ILoansService {
      */
     void createLoan(String mobileNumber );
 
+    /**
+     * Fetches the loan based on the mobile number
+     *
+     * @param mobileNumber String, the mobile number used to create a loan
+     * @return LoansDto object that matches the given mobile number
+     */
+    LoansDto fetchLoan(String mobileNumber);
 }
