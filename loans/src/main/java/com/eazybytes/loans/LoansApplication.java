@@ -1,11 +1,37 @@
 package com.eazybytes.loans;
 
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.License;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+
 @SpringBootApplication
 @EnableJpaAuditing(auditorAwareRef = "auditAwareImpl")
+@OpenAPIDefinition(
+        info = @Info(
+                title = "Loans microservice REST API Documentation",
+                description = "Documentation for Loans microservice which is part of EazyBank Application " ,
+                version = "v1",
+                contact = @Contact( //dettagli su chi contattare
+                        name = "Gianfranco Manca",
+                        email = "discent@gdot.com",
+                        url = "https://www.gianfrancomanca.com"
+                ),
+                license = @License( //dettagli su eventuali licenze
+                        name = "License: Apache 2.0",
+                        url = "https://gianfrancomanca.org"
+                )
+        ),
+        externalDocs = @ExternalDocumentation( //eventuale documentazione esterna creata per chi vuole approfondire la conoscenza sull'applicazione
+                description = "EazyBank Loans microservice REST API Documentation in deep",
+                url = "https://eazybank.org/swagger-docs.html"
+        )
+)
 public class LoansApplication {
 
 	static void main(String[] args) {
