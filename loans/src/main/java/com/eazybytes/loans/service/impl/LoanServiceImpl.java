@@ -32,7 +32,7 @@ public class LoanServiceImpl implements ILoansService {
         if(! optionalLoans.isPresent()) {
             loansRepository.save(createNewLoans(mobileNumber));
         } else {
-            throw new LoanAlreadyExistsException(String.format("Loan with mobile numeber %s already exists", mobileNumber));
+            throw new LoanAlreadyExistsException(String.format("Loan with mobile number %s already exists", mobileNumber));
         }
     }
 
