@@ -108,9 +108,11 @@ public class AccountsServiceImpl implements IAccountsService {
     }
 
     /**
+     * If The given mobile number is bound with some Loan, this loan will be deleted
      *
      * @param mobileNumber - Mobile number of the customer
      * @return - boolean
+     * @throws ResourceNotFoundException
      */
     @Override
     public boolean deleteAccount(String mobileNumber) {
