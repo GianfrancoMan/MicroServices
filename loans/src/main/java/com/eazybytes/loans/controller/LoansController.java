@@ -95,7 +95,7 @@ public class LoansController {
     })
     @GetMapping("/fetch")
     public ResponseEntity<LoansDto> fetchLoanDetails(@RequestParam
-                                                                                        @NotEmpty
+                                                                                        @NotEmpty(message = "Mobile number cannot be empty or null")
                                                                                         @Pattern(regexp="(^[0-9]{10}$)",message = "Mobile Number must be 10 digits")
                                                                                         String mobileNumber) {
 
@@ -169,7 +169,7 @@ public class LoansController {
     @DeleteMapping("/delete")
     public ResponseEntity<ResponseDto> deleteLoanDetails(
                                                                 @RequestParam
-                                                                @NotEmpty
+                                                                @NotEmpty(message = "Mobile number cannot be empty or null")
                                                                 @Pattern(regexp="(^[0-9]{10}$)",message = "Mobile Number must be 10 digits")
                                                                 String mobileNumber) {
         boolean deleted = iLoansService.deleteLoan(mobileNumber);
