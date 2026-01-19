@@ -11,6 +11,7 @@
 	<groupId>com.eazybytes</groupId>
 	<artifactId>cards</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
 	<name>cards</name>
 	<description>Microservice for cards</description>
 	<properties>
@@ -118,6 +119,28 @@
 					</excludes>
 				</configuration>
 			</plugin>
+            <!--
+                        PLUGIN PER CREARE UN'IMMAGINE DOCKER TRAMITE GOOGLE JIB
+                        gianfrancomanca è lo username docker,
+                        ${project.artifactId} è il nome che abbiamo dato al nostro artifatto cioè "cards"
+                        (potevamo anche hardcodarlo, questo è solo un modo per recuperare gli artifactId del pom,
+                        potevamo dare anche un qualunque altro nome ma è bene tenere nomi coerenti in base a cosa si sta creando l'immagine),
+                        dopo i due punti va inserito il tag dell'immagine, anche questo è arbitrario noi abbiamo dato valore "s4".
+
+                        per creare l'immagine da terminale si deve lanciare un comando maven:
+                        spostarsi nella cartella cards e scrivere il comando qui sotto
+                        mvn compile jib:dockerbuild
+                        -->
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration>
+                    <to>
+                        <image>gianfrancomanca/${project.artifactId}:s4</image>
+                    </to>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 
