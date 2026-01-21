@@ -137,7 +137,7 @@
                 <version>3.5.1</version>
                 <configuration>
                     <to>
-                        <image>gianfrancomanca/${project.artifactId}:s4</image>
+                        <image>gianfrancomanca/${project.artifactId}:s6</image>
                     </to>
                 </configuration>
             </plugin>
