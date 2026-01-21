@@ -1,5 +1,6 @@
 package com.eazybytes.accounts;
 
+import com.eazybytes.accounts.dto.AccountsContactInfoDto;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -7,10 +8,12 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.info.License;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @EnableJpaAuditing(auditorAwareRef = "auditAwareImpl") //tramite auditorAwareRef indico il/i bean/s eseguono l'auditing di Jpa
+@EnableConfigurationProperties(value = {AccountsContactInfoDto.class})
 @OpenAPIDefinition( //permette  di definire dettagli della documentazione Swagger OpenApi
         info= @Info( //diamo  alcune informazioni sull'applicazione titolo sotto titolo...
             title = "Accounts microservice REST API Documentation",
