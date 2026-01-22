@@ -1,6 +1,7 @@
 package com.eazybytes.cards.controller;
 
 import com.eazybytes.cards.constants.CardsConstants;
+import com.eazybytes.cards.dto.CardsContactInfoDto;
 import com.eazybytes.cards.dto.CardsDto;
 import com.eazybytes.cards.dto.ErrorResponseDto;
 import com.eazybytes.cards.dto.ResponseDto;
@@ -14,7 +15,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,11 +29,25 @@ import org.springframework.web.bind.annotation.*;
         description = "CRUD REST APIs for Cards microservice in EazyBank to CREATE, UPDATE, FETCH AND DELETE card details")
 @RestController
 @RequestMapping(value = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
-@AllArgsConstructor
 @Validated
 public class CardsController {
 
+    @Value(value = "${build.version}")
+    private String buildVersion;
+
+    @Autowired
+    private Environment environment;
+
+    @Autowired
+    private CardsContactInfoDto cardsContactInfoDto;
+
     private final ICardsService cardsService;
+
+
+    @Autowired
+    public CardsController(ICardsService iCardsService) {
+        this.cardsService = iCardsService;
+    }
 
     /**
      *  Creates a new card based on the given mobile number if the mobile number is not already used
@@ -146,6 +163,58 @@ public class CardsController {
                     .status(HttpStatus.EXPECTATION_FAILED)
                     .body(new ResponseDto(CardsConstants.STATUS_417, CardsConstants.MESSAGE_417_DELETE));
         }
+    }
+
+    @Operation(summary = "Get Build information", description = "Get Build information that is deployed into cards microservice")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "HTTP Status OK"),
+            @ApiResponse(responseCode = "500", description = "HTTP Status Internal Server Error", content = @Content(
+                    schema = @Schema(implementation = ErrorResponseDto.class)
+            ))
+    })
+    /**
+     * Fetches the Build information
+     *
+     * @return an instance of ResponseEntity<String> with Build information
+     */
+    @GetMapping("/build-info")
+    public ResponseEntity<String> getBuildInfo() {
+        return ResponseEntity.ok(this.buildVersion);
+    }
+
+    @Operation(summary = "Get Java version", description = "Get Java versions details that is installed into cards microservice")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "HTTP Status OK"),
+            @ApiResponse(responseCode = "500", description = "HTTP Status Internal Server Error", content = @Content(
+                    schema = @Schema(implementation = ErrorResponseDto.class)
+            ))
+    })
+    @GetMapping("/java-version")
+    /**
+     * Fetches the Java version installed into Cards microservice
+     *
+     * @return an instance of ResponseEntity<String> with Java's version details.
+     */
+    public ResponseEntity<String> getJavaVersion() {
+        return ResponseEntity.ok(environment.getProperty("JAVA_HOME"));
+    }
+
+
+    @Operation(summary = "Get contact info", description = "Contact Info details that can be reached out in case of any issues")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "HTTP Status OK"),
+            @ApiResponse(responseCode = "500", description = "HTTP Status Internal Server Error", content = @Content(
+                    schema = @Schema(implementation = ErrorResponseDto.class)
+            ))
+    })
+    @GetMapping("/contact-info")
+    /**
+     * Fetches the contact info details that can be reached out in case of any issues
+     *
+     * @return an instance of ResponseEntity<CardsContactInfoDto> with contact info details.
+     */
+    public ResponseEntity<CardsContactInfoDto> getContactInfo() {
+        return ResponseEntity.ok(cardsContactInfoDto);
     }
 
 }
