@@ -2,7 +2,9 @@ server:
   port: 8080
 spring:
   application:
-    name: accounts
+    name: "accounts"
+  profiles:
+    active: "prod" #di default accounts microservice parte col profilo "prod"
   datasource:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
@@ -17,21 +19,5 @@ spring:
       ddl-auto: update
     show-sql: true
   config:
-    import:
-      - "application_qa.yml"
-      - "application_prod.yml"
-  profiles:
-    active:
-      - "qa"
-
-build:
-  version: "3.0"
-
-accounts:
-  message: "Welcome to EazyBank accounts related local APIs "
-  contactDetails:
-    name: "John Doe - Developer"
-    email: "john@eazybank.com"
-  onCallSupport:
-    - (555) 555-1234
-    - (555) 523-1345
+    import: "optional:configserver:http://localhost:8071/"
+    #indica che le configurazione di accounts microservice sono recuperabili dal config server  all'url specificato(in questo caso "configserver" è una parola standard da non confondere col nome che abbiamo dato al progetto Spring Cloud Server), "optional:" indica che se non riesce a trovare il config server non lancia un eccezione ma continua comunque con le configurazioni locali, si usa se il mancato recupero delle proprietà non inficia completamente il funzinamento del sistema.
