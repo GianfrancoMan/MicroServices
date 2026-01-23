@@ -1,2 +1,13 @@
+spring:
+  application:
+    name: "configserver"
+  profiles:
+    active: native # native profile is used to load the config from the local file system
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/config # diciamo dove trovare le configurazioni
+
 server:
   port: 8071
