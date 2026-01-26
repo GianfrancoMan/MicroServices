@@ -16,6 +16,17 @@ spring:
           timeout: 5 # indica il timeout in secondi per la connessione al repository remoto
           clone-on-start: true # indica se clonare la repository remota al momento del lancio del config server
           force-pull: true # indica se forzare il pull delle configurazioni al momento del lancio del config server
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: "guest"
+    password: "guest"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 
 encrypt:
   key: "BE3H26GG9372MS15G2CV2V58D23BN" # chiave per criptare le configurazioni
