@@ -19,5 +19,17 @@ spring:
       ddl-auto: update
     show-sql: true
   config:
-    import: "optional:configserver:http://localhost:8071/"
-    #indica che le configurazione di accounts microservice sono recuperabili dal config server  all'url specificato(in questo caso "configserver" è una parola standard da non confondere col nome che abbiamo dato al progetto Spring Cloud Server), "optional:" indica che se non riesce a trovare il config server non lancia un eccezione ma continua comunque con le configurazioni locali, si usa se il mancato recupero delle proprietà non inficia completamente il funzinamento del sistema.
+    import: "optional:configserver:http://localhost:8071/"   #indica che le configurazione di accounts microservice sono recuperabili dal config server  all'url specificato(in questo caso "configserver" è una parola standard da non confondere col nome che abbiamo dato al progetto Spring Cloud Server), "optional:" indica che se non riesce a trovare il config server non lancia un eccezione ma continua comunque con le configurazioni locali, si usa se il mancato recupero delle proprietà non inficia completamente il funzinamento del sistema.
+  rabbitmq: #stabilisce il collegamento con RabbitMQ, queste sono le proprietà di default e springboot sarebbe capace di stabilire il collegamento anche senza menzionarle, ma in caso porte o credenziali differenti questa è la procedura da seguire.
+    host: "localhost"
+    port: 5672
+    stream:
+      username: "guest"
+      password: "guest"
+
+management: #abilita la gestione delle APIs di Actuator
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        #qui si dovrebbe l'endpoint di Actuaor che si vuole esporre, in questo caso "*" indica che tutti gli endpoint sono esposti
