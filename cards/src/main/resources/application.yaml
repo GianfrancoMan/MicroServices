@@ -2,7 +2,7 @@ server:
   port: 9000
 spring:
   application:
-    name: "cards"
+    name: "cards" #deve coincidere col nome data al microservice nel config serer
   profiles:
     active: "prod"
   datasource:

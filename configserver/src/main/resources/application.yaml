@@ -2,12 +2,23 @@ spring:
   application:
     name: "configserver"
   profiles:
-    active: native # native profile is used to load the config from the local file system
+    #active: native # native profile is used to load the config from the local file system
+    active: git # si usa quando memorizziamo le configurazioni in una repository remota
   cloud:
     config:
       server:
-        native:
-          search-locations: classpath:/config # diciamo dove trovare le configurazioni
+        #native: # "native" si usa solo per memorizzare le configurazioni nel config server stsso o nel filesystem
+          #search-locations: classpath:/config # diciamo dove trovare le configurazioni in questo nel classpath del config server stesso.
+          #search-locations: file:///E://MasteringSpringMicroservice//config # diciamo dove trovare le configurazioni in questo nel file system.
+        git:
+          uri: https://github.com/GianfrancoMan/microservices-config.git # l'url della repository remota
+          default-label: main # indica quale branch usare per recuperare le configurazioni
+          timeout: 5 # indica il timeout in secondi per la connessione al repository remoto
+          clone-on-start: true # indica se clonare la repository remota al momento del lancio del config server
+          force-pull: true # indica se forzare il pull delle configurazioni al momento del lancio del config server
+
+encrypt:
+  key: "BE3H26GG9372MS15G2CV2V58D23BN" # chiave per criptare le configurazioni
 
 server:
   port: 8071

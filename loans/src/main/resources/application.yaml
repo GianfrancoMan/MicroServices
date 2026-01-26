@@ -2,7 +2,7 @@ server:
   port: 8090
 spring:
   application:
-    name: "loans"
+    name: "loans" #deve coincidere col nome data al microservice nel config serer
   profiles:
     active: "prod"
   datasource:
