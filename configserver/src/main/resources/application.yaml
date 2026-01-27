@@ -27,6 +27,15 @@ management:
     web:
       exposure:
         include: "*"
+  health: # abiita la ricezione della condizione di liveness e readness dell'applicazione
+    readiness-tate:
+      enabled: true
+    liveness-state:
+      enabled: true
+  endpoint: # abilita gli endpoint di actuator per reperire le informazioni di liveness e readness dell'applicazione
+    health:
+      probes:
+        enabled: true
 
 encrypt:
   key: "BE3H26GG9372MS15G2CV2V58D23BN" # chiave per criptare le configurazioni
