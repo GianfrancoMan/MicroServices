@@ -11,8 +11,10 @@ services:
       timeout: 5s
       retries: 10
       start_period: 5s
-    networks:
-      - eazybank
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
   configserver:
     image: "gianfrancomanca/configserver:s6"
     container_name: configserver-ms
@@ -27,12 +29,10 @@ services:
       timeout: 5s #aspetta la risposta dall'endpoint per 5 secondi
       retries: 10 #se il test fallisce riprova 10 volte
       start_period: 10s #fai partire il test dopo 10 secondi
-    deploy:
-      resources:
-        limits:
-          memory: 700m
-    networks:
-      - eazybank
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+
   accounts:
     image: "gianfrancomanca/accounts:s6"
     container_name: accounts-ms
@@ -41,16 +41,12 @@ services:
     depends_on: #indichiamo da chi dipende questo servizio(accounts)
       configserver: #indichiamo che dipende dal un configserver
         condition: service_healthy #indichiamo che il servizio dipende dal configserver e che deve essere avviato con successo sulla base dell test di healthcheck sopra.
-    deploy:
-      resources:
-        limits:
-          memory: 700m
-    networks:
-      - eazybank
     environment:
       SPRiNG_APPLICATION_NAME: "accounts"
-      SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
-      SPRING_PROFILES_ACTIVE: "default"
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+
   loans:
     image: "gianfrancomanca/loans:s6"
     container_name: loans-ms
@@ -59,17 +55,12 @@ services:
     depends_on: #indichiamo da chi dipende questo servizio(accounts)
       configserver: #indichiamo che dipende dal un configserver
         condition: service_healthy #indichiamo che il servizio dipende dal configserver e che deve essere avviato con successo sulla base dell test di healthcheck sopra.
-
-    deploy:
-      resources:
-        limits:
-          memory: 700m
-    networks:
-      - eazybank
     environment:
       SPRiNG_APPLICATION_NAME: "loans"
-      SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
-      SPRING_PROFILES_ACTIVE: "default"
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+
   cards:
     image: "gianfrancomanca/cards:s6"
     container_name: cards-ms
@@ -78,17 +69,12 @@ services:
     depends_on: #indichiamo da chi dipende questo servizio(accounts)
       configserver: #indichiamo che dipende dal un configserver
         condition: service_healthy #indichiamo che il servizio dipende dal configserver e che deve essere avviato con successo sulla base dell test di healthcheck sopra.
-
-    deploy:
-      resources:
-        limits:
-          memory: 700m
-    networks:
-      - eazybank
     environment:
       SPRiNG_APPLICATION_NAME: "cards"
-      SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
-      SPRING_PROFILES_ACTIVE: "default"
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+
 networks:
   eazybank:
     driver: "bridge"
