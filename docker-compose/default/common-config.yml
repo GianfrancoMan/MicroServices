@@ -1,4 +1,4 @@
-services: #Per ottimizzare il docker compose inseriamo le parti ripetitive in questo file e verranno richiamate nel docker compose
+services:
   network-deploy-service:
     networks:
       - eazybank
@@ -10,10 +10,34 @@ services: #Per ottimizzare il docker compose inseriamo le parti ripetitive in qu
       resources:
         limits:
           memory: 700m
+    environment:
+      SPRING_RABBITMQ_HOST: "rabbit"
 
   microservice-configserver-config:
     extends:
       service: microservice-base-config
     environment:
-      SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
-      SPRING_PROFILES_ACTIVE: "default"
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+
+#services: #Per ottimizzare il docker compose inseriamo le parti ripetitive in questo file e verranno richiamate nel docker compose
+#  network-deploy-service:
+#    networks:
+#      - eazybank
+#
+#  microservice-base-config:
+#    extends:
+#      service: network-deploy-service
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 700m
+#    environment:
+#      SPRING_RABBITMQ_HOST: "rabbit"
+#
+#  microservice-configserver-config:
+#    extends:
+#      service: microservice-base-config
+#    environment:
+#      SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
+#      SPRING_PROFILES_ACTIVE: "default"
