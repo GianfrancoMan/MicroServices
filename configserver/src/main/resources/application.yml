@@ -28,7 +28,7 @@ management:
       exposure:
         include: "*"
   health: # abiita la ricezione della condizione di liveness e readness dell'applicazione
-    readiness-tate:
+    readiness-state:
       enabled: true
     liveness-state:
       enabled: true
