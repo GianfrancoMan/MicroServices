@@ -1,22 +1,36 @@
 services:
-  rabbit:
-    image: rabbitmq:4-management
-    hostname: rabbitmq
+  accountsdb:
+    container_name: accountsdb
     ports:
-      - "5672:5672"
-      - "15672:15672"
-    healthcheck:
-      test: rabbitmq-diagnostics check_port_connectivity
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 5s
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: "accountsdb"
     extends:
       file: common-config.yml
-      service: network-deploy-service
+      service:   microservice-db-config
+
+  loansdb:
+    container_name: loansdb
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_DATABASE: "loansdb"
+    extends:
+      file: common-config.yml
+      service:   microservice-db-config
+
+  cardsdb:
+    container_name: cardsdb
+    ports:
+      - 3308:3306
+    environment:
+      MYSQL_DATABASE: "cardsdb"
+    extends:
+      file: common-config.yml
+      service:   microservice-db-config
 
   configserver:
-    image: "gianfrancomanca/configserver:s6"
+    image: "gianfrancomanca/configserver:s7"
     container_name: configserver-ms
     ports:
       - "8071:8071"
@@ -34,43 +48,52 @@ services:
       service: microservice-base-config
 
   accounts:
-    image: "gianfrancomanca/accounts:s6"
+    image: "gianfrancomanca/accounts:s7"
     container_name: accounts-ms
     ports:
       - "8080:8080"
-    depends_on:
-      configserver:
-        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "accounts"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://accountsdb:3306/accountsdb"
+    depends_on:
+      accountsdb:
+        condition: service_healthy
+      configserver:
+        condition: service_healthy
     extends:
       file: common-config.yml
       service: microservice-configserver-config
 
   loans:
-    image: "gianfrancomanca/loans:s6"
+    image: "gianfrancomanca/loans:s7"
     container_name: loans-ms
     ports:
       - "8090:8090"
-    depends_on:
-      configserver:
-        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "loans"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://loansdb:3307/loansdb"
+    depends_on:
+      loansdb:
+        condition: service_healthy
+      configserver:
+        condition: service_healthy
     extends:
       file: common-config.yml
       service: microservice-configserver-config
 
   cards:
-    image: "gianfrancomanca/cards:s6"
+    image: "gianfrancomanca/cards:s7"
     container_name: cards-ms
     ports:
       - "9000:9000"
-    depends_on:
-      configserver:
-        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "cards"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://cardsdb:3308/cardsdb"
+    depends_on:
+      cardsdb:
+        condition: service_healthy
+      configserver:
+        condition: service_healthy
     extends:
       file: common-config.yml
       service: microservice-configserver-config
@@ -78,6 +101,86 @@ services:
 networks:
   eazybank:
     driver: "bridge"#services:
+
+#  rabbit: #nouvo service relativo a rabbitmq
+#    image: "rabbitmq:4-management"
+#    hostname: rabbitmq
+#    ports:
+#      - "5672:5672"
+#      - "15672:15672"
+#    healthcheck: #definiamo il test di healthcheck per rabbitmq in quanto gli altri servizzi dipendono dal suo completo funziomento
+#      test: rabbitmq-diagnostics check_port_connectivity #test fornito dalla documentazione ufficiale di rabbitmq
+#      interval: 10s
+#      timeout: 5s
+#      retries: 10
+#      start_period: 5s
+#    extends:
+#      file: common-config.yml
+#      service: network-deploy-service
+#
+#  configserver:
+#    image: "gianfrancomanca/configserver:s6"
+#    container_name: configserver-ms
+#    ports:
+#      - "8071:8071"
+#    depends_on:
+#      rabbit: #indichiamo da chi dipende questo servizio(configserver)
+#        condition: service_healthy #indichiamo che il servizio dipende dal servizio rabbitmq e che deve essere avviato con successo sulla base dell test di healthcheck sopra.
+#    healthcheck: #trimite curl chiamiamo l'endpoint readiness e se non risulta UP allora esce con exit 1
+#      test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"
+#      interval: 10s #tra un tentativo e ll'altro  fai passare 10 secondi
+#      timeout: 5s #aspetta la risposta dall'endpoint per 5 secondi
+#      retries: 10 #se il test fallisce riprova 10 volte
+#      start_period: 10s #fai partire il test dopo 10 secondi
+#    extends:
+#      file: common-config.yml
+#      service: microservice-base-config
+#
+#  accounts:
+#    image: "gianfrancomanca/accounts:s6"
+#    container_name: accounts-ms
+#    ports:
+#      - "8080:8080"
+#    depends_on: #indichiamo da chi dipende questo servizio(accounts)
+#      configserver: #indichiamo che dipende dal un configserver
+#        condition: service_healthy #indichiamo che il servizio dipende dal configserver e che deve essere avviato con successo sulla base dell test di healthcheck sopra.
+#    environment:
+#      SPRiNG_APPLICATION_NAME: "accounts"
+#    extends:
+#      file: common-config.yml
+#      service: microservice-configserver-config
+#
+#  loans:
+#    image: "gianfrancomanca/loans:s6"
+#    container_name: loans-ms
+#    ports:
+#      - "8090:8090"
+#    depends_on: #indichiamo da chi dipende questo servizio(accounts)
+#      configserver: #indichiamo che dipende dal un configserver
+#        condition: service_healthy #indichiamo che il servizio dipende dal configserver e che deve essere avviato con successo sulla base dell test di healthcheck sopra.
+#    environment:
+#      SPRiNG_APPLICATION_NAME: "loans"
+#    extends:
+#      file: common-config.yml
+#      service: microservice-configserver-config
+#
+#  cards:
+#    image: "gianfrancomanca/cards:s6"
+#    container_name: cards-ms
+#    ports:
+#      - "9000:9000"
+#    depends_on: #indichiamo da chi dipende questo servizio(accounts)
+#      configserver: #indichiamo che dipende dal un configserver
+#        condition: service_healthy #indichiamo che il servizio dipende dal configserver e che deve essere avviato con successo sulla base dell test di healthcheck sopra.
+#    environment:
+#      SPRiNG_APPLICATION_NAME: "cards"
+#    extends:
+#      file: common-config.yml
+#      service: microservice-configserver-config
+#
+#networks:
+#  eazybank:
+#    driver: "bridge"
 
 #  rabbit: #nouvo service relativo a rabbitmq
 #    image: "rabbitmq:4-management"
