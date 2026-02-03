@@ -18,7 +18,7 @@ public class CustomerMapper {
     //Mappa e restituisce L'oogetto Customer con i valori dell'oggetto CustomerDto
     public static Customer mapToCustomer(CustomerDto customerDto, Customer customer) {
         customer.setEmail(customerDto.getEmail());
-        customer.setName(customerDto.getEmail());
+        customer.setName(customerDto.getName());
         customer.setMobileNumber(customerDto.getMobileNumber());
         return customer;
     }
