@@ -6,7 +6,7 @@ spring:
   profiles:
     active: "prod"
   datasource:
-    url: jdbc:mysql://localhost:3307/loasdb
+    url: jdbc:mysql://localhost:3307/loansdb
     username: root
     password: root
   jpa:
