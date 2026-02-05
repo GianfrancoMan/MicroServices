@@ -27,3 +27,24 @@ management: #abilita la gestione delle APIs di Actuator
       exposure:
         include: "*"
         #qui si dovrebbe l'endpoint di Actuaor che si vuole esporre, in questo caso "*" indica che tutti gli endpoint sono esposti
+  endpoint:
+    shutdown:
+      access: unrestricted #abilita l'endpoint shutdown di Actuator ad essere accessibile da tutti
+  info:
+    env:
+      enabled: true #abilita l'endpoint info di Actuator ad esporre le info relative all'ambiente di esecuzione (vedi proprietà info in basso)
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    fetchRegistry: true #abilita accounts a recuperare il registro dielle istanze in esecuzione
+    registerWithEureka: true #abilita accounts a registrarsi al server eureka
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/ #dove gira il server eureka
+
+info: #queste informazioni saranno visualizzate nalla dashboard di Eureka e sono esposte da un endpoint di Actuator
+  app:
+    name: "accounts"
+    description: "Eazy Bank Accounts Application"
+    version: "1.0.0"
