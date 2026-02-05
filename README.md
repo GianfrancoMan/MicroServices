@@ -1,2 +1,2 @@
-Demo for Cloud Native Microservices Application  
+Demo of a microservices-based application  
 In Progress...
