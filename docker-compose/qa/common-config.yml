@@ -34,24 +34,8 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
 
-#services: #Per ottimizzare il docker compose inseriamo le parti ripetitive in questo file e verranno richiamate nel docker compose
-#  network-deploy-service:
-#    networks:
-#      - eazybank
-#
-#  microservice-base-config:
-#    extends:
-#      service: network-deploy-service
-#    deploy:
-#      resources:
-#        limits:
-#          memory: 700m
-#    environment:
-#      SPRING_RABBITMQ_HOST: "rabbit"
-#
-#  microservice-configserver-config:
-#    extends:
-#      service: microservice-base-config
-#    environment:
-#      SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
-#      SPRING_PROFILES_ACTIVE: "default"
+  microservice-eureka-config:
+    extends:
+      service: microservice-configserver-config
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/

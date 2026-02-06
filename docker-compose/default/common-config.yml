@@ -34,6 +34,12 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
 
+  microservice-eureka-config:
+    extends:
+      service: microservice-configserver-config
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
+
 #services: #Per ottimizzare il docker compose inseriamo le parti ripetitive in questo file e verranno richiamate nel docker compose
 #  network-deploy-service:
 #    networks:

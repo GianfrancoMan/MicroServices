@@ -18,7 +18,28 @@ spring:
     import: "optional:configserver:http://localhost:8071/"  #indica che le configurazione di accounts microservice sono recuperabili dal config server  all'url specificato(in questo caso "configserver" è una parola standard da non confondere col nome che abbiamo dato al progetto Spring Cloud Server), "optional:" indica che se non riesce a trovare il config server non lancia un eccezione ma continua comunque con le configurazioni locali, si usa se il mancato recupero delle proprietà non inficia completamente il funzinamento del sistema.
 
 management: #abilita la gestione delle APIs di Actuator
-  endpoint:
+  endpoints:
     web:
       exposure:
         include: "*" #qui si dovrebbe l'endpoint di Actuaor che si vuole esporre, in questo caso "*" indica che tutti gli endpoint sono esposti
+  endpoint:
+    shutdown:
+      access: unrestricted
+  info:
+    env:
+      enabled: true
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    fetchRegistry: true #abilita loans a recuperare il registro dielle istanze in esecuzione
+    registerWithEureka: true #abilita loans a registrarsi al server eureka
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/ #dove gira il server eureka
+
+info:
+  app:
+    name: "loans"
+    description: "Eazy Bank Loans Application"
+    version: "1.0.0"
