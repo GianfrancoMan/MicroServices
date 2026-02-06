@@ -100,8 +100,9 @@ services:
 
 networks:
   eazybank:
-    driver: "bridge"#services:
-
+    driver: "bridge"
+    
+#services:
 #  rabbit: #nouvo service relativo a rabbitmq
 #    image: "rabbitmq:4-management"
 #    hostname: rabbitmq
