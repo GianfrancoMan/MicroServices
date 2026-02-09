@@ -2,6 +2,11 @@ package com.eybytes.gatewayserver;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.gateway.route.RouteLocator;
+import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
+import org.springframework.context.annotation.Bean;
+
+import java.time.LocalDateTime;
 
 @SpringBootApplication
 public class GatewayserverApplication {
@@ -9,5 +14,31 @@ public class GatewayserverApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(GatewayserverApplication.class, args);
 	}
+
+    @Bean
+    public RouteLocator routerLocator(RouteLocatorBuilder builder) {
+        return builder.routes()
+                .route( pth -> pth
+                        .path("/eazybank/accounts/**")
+                        .filters(flt -> flt
+                                .rewritePath("eazybank/accounts/(?<segment>.*)", "/${segment}") //riscrive il path ricevuto in modo da mapparlo con quello originale del microservizio
+                                .addResponseHeader("X-Response-Time", LocalDateTime.now().toString())//aggiunge un header alla risposta
+                        )
+                        .uri("lb://accounts")
+                )
+                .route( pth -> pth
+                        .path("/eazybank/loans/**")
+                        .filters(flt -> flt.rewritePath("eazybank/loans/(?<segment>.*)", "/${segment}")
+                                .addResponseHeader("X-Response-Time", LocalDateTime.now().toString()))
+                        .uri("lb://loans")
+                )
+                .route( pth -> pth
+                        .path("/eazybank/cards/**")
+                        .filters(flt -> flt.rewritePath("eazybank/cards/(?<segment>.*)", "/${segment}")
+                                .addResponseHeader("X-Response-Time", LocalDateTime.now().toString()))
+                        .uri("lb://cards")
+                )
+                .build();
+    }
 
 }
