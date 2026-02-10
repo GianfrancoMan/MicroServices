@@ -10,14 +10,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag( //consente di dare dettagli su questo controller nella documentazione swagger
         name = "REST APIs for Customer in EazyBank",
@@ -27,6 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
 @Validated
 public class CustomerController {
+
+    private Logger logger = LoggerFactory.getLogger(CustomerController.class);
 
     private final ICustomerService iCustomerService;
 
@@ -60,11 +61,19 @@ public class CustomerController {
     })
     @GetMapping("/fetchCustomerDetails")
     public ResponseEntity<CustomerDetailsDto> fetchCustomerDetails(
+            @RequestHeader(value = "eazybank-correlation-id")
+            String correlationId, //correlationId assume il valore contenuto nell'header della request "eazybenk-correlation-Id" se presente.
             @Pattern(regexp = "^[0-9]{10}$", message = "Mobile number must be 10 digits") //Non avendo in input un oggetto ma un valore singolo, la validazione si fa con la validation constraint @Pattern
             @RequestParam
             String mobileNumber) {
 
-        CustomerDetailsDto customerDetailsDto = iCustomerService.fetchCustomerDetails(mobileNumber);
+        if(correlationId != null || !correlationId.equals("")) {
+            logger.debug("eazybank-correlation-id fount: {}", correlationId);
+        } else {
+            logger.debug("\"eazybanck-correlation-id\" header not found");
+        }
+
+        CustomerDetailsDto customerDetailsDto = iCustomerService.fetchCustomerDetails(mobileNumber, correlationId);
 
         return ResponseEntity.ok().body(customerDetailsDto);
     }

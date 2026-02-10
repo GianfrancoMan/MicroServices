@@ -15,6 +15,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -31,6 +33,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
 @Validated
 public class CardsController {
+
+    private Logger logger = LoggerFactory.getLogger(CardsController.class);
 
     @Value(value = "${build.version}")
     private String buildVersion;
@@ -91,9 +95,18 @@ public class CardsController {
     })
     @GetMapping("/fetch")
     public ResponseEntity<CardsDto> fetchCardDetails(
-                                                            @NotEmpty(message = "Mobile number cannot be empty or null")
-                                                            @Pattern(regexp = "(^[0-9]{10}$)", message = "Mobile number must be 10 digits")
-                                                            @RequestParam String mobileNumber) {
+            @RequestHeader(value = "eazybank-correlation-id")
+            String correlationId,
+            @NotEmpty(message = "Mobile number cannot be empty or null")
+            @Pattern(regexp = "(^[0-9]{10}$)", message = "Mobile number must be 10 digits")
+            @RequestParam String mobileNumber) {
+
+        if(correlationId != null || !correlationId.equals("")) {
+            logger.debug("eazybank-correlation-id fount: {}", correlationId);
+        } else {
+            logger.debug("\"eazybanck-correlation-id\" header not found");
+        }
+
         CardsDto cardsDto = this.cardsService.fetchCard(mobileNumber);
 
         return ResponseEntity
