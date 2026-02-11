@@ -23,6 +23,8 @@ public class GatewayserverApplication {
                         .filters(flt -> flt
                                 .rewritePath("eazybank/accounts/(?<segment>.*)", "/${segment}") //riscrive il path ricevuto in modo da mapparlo con quello originale del microservizio
                                 .addResponseHeader("X-Response-Time", LocalDateTime.now().toString())//aggiunge un header alla risposta
+                                .circuitBreaker(config -> config.setName("accountsCircuitBreaker")//creo un cicuit-breaker per accounts-MS e gli do il nome accountsCircuitBreaker
+                                        .setFallbackUri("forward:/contactSupport")) //indico l'endpoint da invocare per la risposta di fallback
                         )
                         .uri("lb://accounts")
                 )
