@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 //Indica che un'interfaccia dichiarativa che agisce come CLIENT FEIGN che si connette con il microservizio LOANS
-@FeignClient(value = "loans")
+@FeignClient(name = "loans", fallback = LoansFallBack.class)
 public interface LoansFeignClient {
 
     //Ogni metodo astrato dichiarato in questa interfaccia deve avere un corrispndente metodo

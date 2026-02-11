@@ -20,6 +20,10 @@ spring:
     show-sql: true
   config:
     import: "optional:configserver:http://localhost:8071/"
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true #attiva il circuit-breaker tutti client Openfeign di Accounts
 
 management:
   endpoints:
@@ -50,6 +54,8 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8070/eureka/
 
+
+
 info:
   app:
     name: "accounts"
@@ -61,3 +67,11 @@ logging:
     com:
       eazybytes:
         accounts: DEBUG #Tutti i log di gatewayserver saranno di livello DEBUG
+
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      slidingWindowSize: 10
+      permittedNumberOfCallsInHalfOpenState: 2
+      failureRateThreshold: 50
+      waitDurationInOpenState: 10000
