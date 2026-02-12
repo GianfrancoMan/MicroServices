@@ -75,3 +75,15 @@ resilience4j.circuitbreaker:
       permittedNumberOfCallsInHalfOpenState: 2
       failureRateThreshold: 50
       waitDurationInOpenState: 10000
+
+#abilita il pattern retry per eventuali metodi annotati con retry nell'Accounts MS(Quindi non tramite il Gateway ma direttamente nel MS)
+#Si possono configurare pià istanze di retry con i nomi che abbiamo assegnato al parametro name dell'annotazione @Retry
+#In Questo caso non è stato neccessario perchè abbiamo una sola istanza e questa configurazione di default viene presa in considerazione solo da lei
+#Ma in altri casi le configurazioni(configs)  sarebbero scritte come figlie della proprietà resilience4j.retry.instances.<nome_istanza>.configs...
+resilience4j.retry:
+  configs:
+    default:
+      maxAttempts: 3
+      waitDuration: 500 #Per valori superiori a quello di default del cicuit breaker attivato per il Ms accounts bisogna sovrascriverlo nel configurazione del circuit breaker
+      enableExponentialBackoff: true
+      exponential-backoff-multiplier: 2
