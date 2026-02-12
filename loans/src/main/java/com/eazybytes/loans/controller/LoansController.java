@@ -286,6 +286,8 @@ public class LoansController {
      */
     @GetMapping(path = "/contact-info")
     public ResponseEntity<LoansContactInfoDto> getContactInfo() {
+        logger.debug("Invoked Loans contact-Info");
+        //throw new RuntimeException("Forced Exception"); //to testing retry pattern
         return ResponseEntity.ok(loansContactInfoDto);
     }
 
