@@ -87,3 +87,7 @@ resilience4j.retry:
       waitDuration: 500 #Per valori superiori a quello di default del cicuit breaker attivato per il Ms accounts bisogna sovrascriverlo nel configurazione del circuit breaker
       enableExponentialBackoff: true
       exponential-backoff-multiplier: 2
+      ignore-exceptions: #con questa proprieta' possiamo specificare quali eccezioni non devono essere considerate come errori per il retry pattern
+        - java.lang.NullPointerException
+      retry-exceptions: # verra eseguito il retry pattern solo per le eccezioni specificate, quando si definisce questa proprieta' non si deve definire la proprieta' ignore-exceptions  perche' viene presa in considerazione solo l'eccezione indicata e tutte le altre verrano automaticamente ignorate.
+        - java.util.concurrent.TimeoutException

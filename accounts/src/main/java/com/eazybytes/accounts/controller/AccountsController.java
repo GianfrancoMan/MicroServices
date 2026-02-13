@@ -26,6 +26,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.concurrent.TimeoutException;
+
 @Tag( //consente di dare dettagli su questo controller nella documentazione swagger
         name = "CRUD REST APIs for Accounts microservice in EazyBank",
         description = "CRUD REST APIs  in EazyBank to CREATE, UPDATE, FETCH AND DELETE accounts details"
@@ -233,11 +235,12 @@ public class AccountsController {
     /**
      * Get properties of the Accounts microservice by field marked with @Value annotation
      */
-    public ResponseEntity<String> getBuildInfo() {
+    public ResponseEntity<String> getBuildInfo() /*throws TimeoutException*/ {
         logger.debug("getBuildInfo() method invoked");
-        throw new RuntimeException();
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .body(buildVersion);
+        //throw new NullPointerException(); //per testare retry pattern ignore-exceptions
+        //throw new TimeoutException(); //per testare retry pattern retry-exceptions
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(buildVersion);
     }
 
     /*1)Il metodo di fallbck deve avere la stessa firma del metodo per il quale viene invocato
