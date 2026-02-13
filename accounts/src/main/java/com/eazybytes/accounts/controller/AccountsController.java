@@ -6,6 +6,7 @@ import com.eazybytes.accounts.dto.CustomerDto;
 import com.eazybytes.accounts.dto.ErrorResponseDto;
 import com.eazybytes.accounts.dto.ResponseDto;
 import com.eazybytes.accounts.service.IAccountsService;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -271,6 +272,7 @@ public class AccountsController {
                     )
             )
     })
+    @RateLimiter(name = "getJavaVersion", fallbackMethod = "getJavaVersionFallback") //indico che questo endpoint ha un rate limiter e indico il metodo fallback
     @GetMapping("/java-version")
     /**
      *  Get properties of the Accounts microservice by the Environment instance Injected from the spring context
@@ -278,6 +280,11 @@ public class AccountsController {
     public ResponseEntity<String> getJavaVersion() {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(environment.getProperty("JAVA_HOME"));
+    }
+    /*Metodo di FALLBACK nel caso entri in azione il rate limiter pattern per getJavaVersion*/
+    public ResponseEntity<String> getJavaVersionFallback(Throwable throwable) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("JAVA 25");
     }
 
     @Operation(

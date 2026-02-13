@@ -89,5 +89,12 @@ resilience4j.retry:
       exponential-backoff-multiplier: 2
       ignore-exceptions: #con questa proprieta' possiamo specificare quali eccezioni non devono essere considerate come errori per il retry pattern
         - java.lang.NullPointerException
-      retry-exceptions: # verra eseguito il retry pattern solo per le eccezioni specificate, quando si definisce questa proprieta' non si deve definire la proprieta' ignore-exceptions  perche' viene presa in considerazione solo l'eccezione indicata e tutte le altre verrano automaticamente ignorate.
-        - java.util.concurrent.TimeoutException
+      retry-exceptions: # verra eseguito il retry pa
+
+resilience4j.ratelimiter:
+    configs:
+      default:
+        timeout-duration: 1000
+        limit-refresh-period: 5000
+        limit-for-period: 1
+
