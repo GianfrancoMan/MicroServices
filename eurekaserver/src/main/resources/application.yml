@@ -18,3 +18,9 @@ management:
     health:
       probes:
         enabled: true
+  metrics: #indica a micrometter e promethues di registrare le metriche per questo servizio tramite il nome dell'applicazione.
+    tags:
+      application: ${spring.application.name}
+logging:
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"

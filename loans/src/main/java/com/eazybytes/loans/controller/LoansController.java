@@ -122,13 +122,10 @@ public class LoansController {
             @Pattern(regexp="(^[0-9]{10}$)",message = "Mobile Number must be 10 digits")
              String mobileNumber) {
 
-        if(correlationId != null || !correlationId.equals("")) {
-            logger.debug("eazybank-correlation-id fount: {}", correlationId);
-        } else {
-            logger.debug("\"eazybanck-correlation-id\" header not found");
-        }
-
+        logger.debug("fetchLoanDetails method start");
         LoansDto loansDto = iLoansService.fetchLoan(mobileNumber);
+        logger.debug("fetchLoanDetails method end");
+
         return ResponseEntity.ok().body(loansDto);
     }
 

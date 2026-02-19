@@ -31,9 +31,16 @@ management:
     health:
       probes:
         enabled: true
+  metrics: #indica a micrometter e promethues di registrare le metriche per questo servizio tramite il nome dell'applicazione.
+    tags:
+      application: ${spring.application.name}
 
 encrypt:
   key: "BE3H26GG9372MS15G2CV2V58D23BN" # chiave per criptare le configurazioni
 
 server:
   port: 8071
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"

@@ -101,13 +101,9 @@ public class CardsController {
             @Pattern(regexp = "(^[0-9]{10}$)", message = "Mobile number must be 10 digits")
             @RequestParam String mobileNumber) {
 
-        if(correlationId != null || !correlationId.equals("")) {
-            logger.debug("eazybank-correlation-id fount: {}", correlationId);
-        } else {
-            logger.debug("\"eazybanck-correlation-id\" header not found");
-        }
-
+        logger.debug("fetchCardDetails method start");
         CardsDto cardsDto = this.cardsService.fetchCard(mobileNumber);
+        logger.debug("fetchCardDetails method end");
 
         return ResponseEntity
                 .status(HttpStatus.OK)

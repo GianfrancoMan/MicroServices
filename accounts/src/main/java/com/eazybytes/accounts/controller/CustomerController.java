@@ -67,13 +67,9 @@ public class CustomerController {
             @RequestParam
             String mobileNumber) {
 
-        if(correlationId != null || !correlationId.equals("")) {
-            logger.debug("eazybank-correlation-id fount: {}", correlationId);
-        } else {
-            logger.debug("\"eazybanck-correlation-id\" header not found");
-        }
-
+        logger.debug("fetchCustomerDetails method start");
         CustomerDetailsDto customerDetailsDto = iCustomerService.fetchCustomerDetails(mobileNumber, correlationId);
+        logger.debug("fetchCustomerDetails method end");
 
         return ResponseEntity.ok().body(customerDetailsDto);
     }
