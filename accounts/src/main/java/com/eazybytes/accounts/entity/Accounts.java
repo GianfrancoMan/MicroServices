@@ -22,6 +22,9 @@ public class Accounts extends BaseEntity {
     @Column(name = "branch_address")
     private String branchAddress;
 
+    @Column(name = "communication_sw")
+    private Boolean communicationSw;
+
     /*Actually, spring jpa is smart enough to guess that customerId corresponds to customer_id,
     but I keep this annotation to remember what to do if the field name and the column name in the table do not match.*/
 }
