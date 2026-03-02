@@ -23,7 +23,7 @@ spring:
   cloud:
     openfeign:
       circuitbreaker:
-        enabled: true #attiva il circuit-breaker tutti client Openfeign di Accounts
+        enabled: true
     function:
       definition: updateCommunication
     stream:
@@ -37,13 +37,12 @@ spring:
         binder:
           brokers:
             - localhost:9092
-
 management:
   endpoints:
     web:
       exposure:
         include: "*"
-  health: # abiita la ricezione della condizione di liveness e readness dell'applicazione
+  health:
     readiness-state:
       enabled: true
     liveness-state:
@@ -57,9 +56,10 @@ management:
   info:
     env:
       enabled: true
-  metrics: #indica a micrometter e promethues di registrare le metriche per questo servizio tramite il nome dell'applicazione.
+  metrics:
     tags:
       application: ${spring.application.name}
+
 
 eureka:
   instance:
@@ -69,8 +69,6 @@ eureka:
     registerWithEureka: true
     serviceUrl:
       defaultZone: http://localhost:8070/eureka/
-
-
 
 info:
   app:
@@ -82,7 +80,7 @@ logging:
   level:
     com:
       eazybytes:
-        accounts: DEBUG #Tutti i log di gatewayserver saranno di livello DEBUG
+        accounts: DEBUG
   pattern:
     level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
 
@@ -94,25 +92,21 @@ resilience4j.circuitbreaker:
       failureRateThreshold: 50
       waitDurationInOpenState: 10000
 
-#abilita il pattern retry per eventuali metodi annotati con retry nell'Accounts MS(Quindi non tramite il Gateway ma direttamente nel MS)
-#Si possono configurare pià istanze di retry con i nomi che abbiamo assegnato al parametro name dell'annotazione @Retry
-#In Questo caso non è stato neccessario perchè abbiamo una sola istanza e questa configurazione di default viene presa in considerazione solo da lei
-#Ma in altri casi le configurazioni(configs)  sarebbero scritte come figlie della proprietà resilience4j.retry.instances.<nome_istanza>.configs...
 resilience4j.retry:
   configs:
     default:
       maxAttempts: 3
-      waitDuration: 500 #Per valori superiori a quello di default del cicuit breaker attivato per il Ms accounts bisogna sovrascriverlo nel configurazione del circuit breaker
+      waitDuration: 500
       enableExponentialBackoff: true
-      exponential-backoff-multiplier: 2
-      ignore-exceptions: #con questa proprieta' possiamo specificare quali eccezioni non devono essere considerate come errori per il retry pattern
+      exponentialBackoffMultiplier: 2
+      ignoreExceptions:
         - java.lang.NullPointerException
-      retry-exceptions: # verra eseguito il retry pa
+      retryExceptions:
+        - java.util.concurrent.TimeoutException
 
 resilience4j.ratelimiter:
-    configs:
-      default:
-        timeout-duration: 1000
-        limit-refresh-period: 5000
-        limit-for-period: 1
-
+  configs:
+    default:
+      timeoutDuration: 1000
+      limitRefreshPeriod: 5000
+      limitForPeriod: 1

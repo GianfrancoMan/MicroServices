@@ -16,7 +16,7 @@ spring:
             response-timeout: 10s
   data:
     redis:
-      connect-timeout: 2s
+      connect-timeout: 5s
       host: localhost
       port: 6379
       timeout: 1s
@@ -25,7 +25,6 @@ spring:
       resourceserver:
         jwt:
           jwk-set-uri: "http://localhost:7080/realms/master/protocol/openid-connect/certs"
-
 management:
   endpoints:
     web:
@@ -33,11 +32,11 @@ management:
         include: "*"
   endpoint:
     gateway:
-      access: "unrestricted"
+      access: unrestricted
   info:
     env:
       enabled: true
-  metrics: #indica a micrometter e promethues di registrare le metriche per questo servizio tramite il nome dell'applicazione.
+  metrics:
     tags:
       application: ${spring.application.name}
 
@@ -51,7 +50,7 @@ logging:
   level:
     com:
       eazybytes:
-        gatewayserver: DEBUG #Tutti i log di gatewayserver saranno di livello DEBUG
+        gatewayserver: DEBUG
   pattern:
     level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
 
@@ -62,19 +61,3 @@ resilience4j.circuitbreaker:
       permittedNumberOfCallsInHalfOpenState: 2
       failureRateThreshold: 50
       waitDurationInOpenState: 10000
-#  time-limiter:
-#    configs:
-#      default:
-#        timeoutDuration: 10s
-
-
-
-
-
-
-
-
-
-
-
-

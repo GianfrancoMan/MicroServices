@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: message
+    name: "message"
   cloud:
     function:
       definition: email|sms
