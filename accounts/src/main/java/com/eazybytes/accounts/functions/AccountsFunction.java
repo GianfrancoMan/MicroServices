@@ -14,7 +14,7 @@ public class AccountsFunction {
     private static final Logger log = LoggerFactory.getLogger(AccountsFunction.class);
 
     @Bean
-    public Consumer<Long> updateComunication(IAccountsService iAccountsService) {
+    public Consumer<Long> updateCommunication(IAccountsService iAccountsService) {
         return accountNumber -> {
             log.info("Updating communication status for the account number: {}", accountNumber);
             iAccountsService.updateCommunicationStatus(accountNumber);

@@ -31,6 +31,7 @@ public class AccountsServiceImpl implements IAccountsService {
     private AccountsRepository accountsRepository;
     private CustomerRepository customerRepository;
     private final StreamBridge streamBridge;
+
     /**
      *
      * @param customerDto - CoustumerDto object
@@ -54,7 +55,7 @@ public class AccountsServiceImpl implements IAccountsService {
         var accountsMsgDto = new AccountsMsgDto(account.getAccountNumber(), customer.getName(),
                 customer.getEmail(), customer.getMobileNumber());
         logger.info("Sending Communication request for the details: {}", accountsMsgDto);
-        var result = streamBridge.send("sendCommunication-out-0`", accountsMsgDto);
+        var result = streamBridge.send("sendCommunication-out-0", accountsMsgDto);
         logger.info("Is the Communication request successfully triggered ? : {}", result);
     }
 
